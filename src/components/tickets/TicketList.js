@@ -7,6 +7,7 @@ export const TicketList = () => {
   const [allTickets, setAllTickets] = useState([]);
   const [showEmergencyOnly, setShowEmergencyOnly] = useState(false);
   const [filteredTickets, setFilteredTickets] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     getAllTickets().then((ticketsArray) => {
@@ -26,10 +27,17 @@ export const TicketList = () => {
     }
   }, [showEmergencyOnly, allTickets]);
 
+  useEffect(() => {
+    const foundTickets = allTickets.filter((ticket) =>
+      ticket.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredTickets(foundTickets);
+  }, [searchTerm, allTickets]);
+
   return (
     <div className="tickets-container">
       <h2>Tickets</h2>
-      <div>
+      <div className="filter-bar">
         <button
           className="filter-btn btn-primary"
           onClick={() => {
@@ -46,6 +54,14 @@ export const TicketList = () => {
         >
           Show All
         </button>
+        <input
+          type="text"
+          placeholder="Search Tickets"
+          className="ticket-search"
+          onChange={(event) => {
+            setSearchTerm(event.target.value);
+          }}
+        />
       </div>
       <article className="tickets">
         {filteredTickets.map((ticketObj) => {
